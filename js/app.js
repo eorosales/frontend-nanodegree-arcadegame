@@ -8,8 +8,8 @@ var Enemy = function(loc) {
   // The image/sprite for our enemies, this uses
   // a helper we've provided to easily load images
   this.sprite = 'images/enemy-bug.png';
-  this.enemyWidth = this.sprite.width;
-  this.enemyHeight = this.sprite.height;
+  this.width = 70;
+  this.height = 65;
 };
 
 // Update the enemy's position, required method for game
@@ -24,6 +24,10 @@ Enemy.prototype.update = function(dt) {
       this.x = this.x - 671;
       this.x += Math.random() + (dt * 200);
     }
+    if(detectCollision()) {
+      player.x = 200;
+      player.y = 400;
+    }
 };
 // Draw the enemy on the screen, required method for game
 
@@ -37,8 +41,11 @@ var Player = function() {
   this.x = 200;
   this.y = 400;
   this.sprite = 'images/char-boy.png';
+  this.height = 76;
+  this.width = 67;
 }
 
+// Methods shared for all Player objects
 Player.prototype.moveLEFT = function() {
   this.x -= 100;
   if(this.x < 0) {
@@ -68,11 +75,9 @@ Player.prototype.moveRIGHT = function() {
 }
 
 Player.prototype.handleInput = function(allowedKeys) {
-
   switch(allowedKeys) {
     case 'up':
       this.moveUP();
-      console.log(this.pos);
       break;
     case 'down':
       this.moveDOWN();
@@ -86,8 +91,6 @@ Player.prototype.handleInput = function(allowedKeys) {
     default:
       console.log('not an allowed key');
   }
-  // Testing purposes DELETE
-  console.log(this.x + " " + this.y);
 }
 
 Player.prototype.update = function(dt) {
@@ -97,15 +100,32 @@ Player.prototype.render = function(dt) {
   ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Now instantiate your objects.
+var detectCollision = function() {
+  var collision = false;
+  for(var i = 0; i < allEnemies.length; i++) {
+    if(allEnemies[i].x < player.x + player.width &&
+       allEnemies[i].x + allEnemies[i].width > player.x &&
+       allEnemies[i].y < player.y + player.height &&
+       allEnemies[i].height + allEnemies[i].y > player.y) {
+         collision = true;
+     }
+  }
+  if(collision === true) {
+    return true;
+  }else {
+    return false;
+  }
+}
+
+// Instatiate objects
 // An array called allEnemies
-// A player object in a variable called player
-
 var allEnemies = [new Enemy(0), new Enemy(1), new Enemy(2)];
+// A player object in a variable called player
 var player = new Player();
+    detectCollision();
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+// Listens for key presses and sends the keys to your
+// Player.handleInput() method.
 document.addEventListener('keyup', function(e) {
   e.preventDefault();
     var allowedKeys = {
@@ -114,6 +134,5 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-
     player.handleInput(allowedKeys[e.keyCode]);
 });
