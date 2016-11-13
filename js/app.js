@@ -1,5 +1,6 @@
 // Enemies our player must avoid
 var Enemy = function(loc, speed) {
+    "use strict";
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
     this.x = 0;
@@ -12,34 +13,45 @@ var Enemy = function(loc, speed) {
     this.height = 65;
 };
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
+// Method for collision detectiong applied for each Enemy object
+Enemy.prototype.detectCollision = function() {
+    "use strict";
+    if (this.x < player.x + player.width &&
+        this.x + this.width > player.x &&
+        this.y < player.y + player.height &&
+        this.height + this.y > player.y) {
 
-    this.x += this.speed * dt;
-
-    // Once the x position of an Enemy object has exceeded the canvas width
-    // Enemy object moves back to initial starting position
-    if (this.x > 500) {
-        this.x = this.x - 671;
-    }
-
-    if (detectCollision()) {
+        // Player object is reset to initial starting X and Y position
         player.x = 200;
         player.y = 400;
     }
 };
 
+// Update the enemy's position, required method for game
+// Parameter: dt, a time delta between ticks
+Enemy.prototype.update = function(dt) {
+    "use strict";
+    // You should multiply any movement by the dt parameter
+    // which will ensure the game runs at the same speed for
+    // all computers.
+    this.x += this.speed * dt;
+    this.detectCollision();
+    // Once the x position of an Enemy object has exceeded the canvas width
+    // Enemy object moves back to initial starting position
+    if (this.x > 500) {
+        this.x = this.x - 671;
+    }
+};
+
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
+    "use strict";
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
 // Player class
 var Player = function() {
+    "use strict";
     this.x = 200;
     this.y = 400;
     this.speed = 50;
@@ -50,6 +62,7 @@ var Player = function() {
 
 // Methods shared for all Player objects
 Player.prototype.moveLEFT = function() {
+    "use strict";
     this.x -= 100;
     if (this.x < 0) {
         this.x = 0;
@@ -65,6 +78,7 @@ Player.prototype.moveUP = function() {
 };
 
 Player.prototype.moveDOWN = function() {
+    "use strict";
     this.y += 85;
     if (this.y > 400) {
         this.y = 400;
@@ -72,6 +86,7 @@ Player.prototype.moveDOWN = function() {
 };
 
 Player.prototype.moveRIGHT = function() {
+    "use strict";
     this.x += 100;
     if (this.x > 400) {
         this.x = 400;
@@ -80,6 +95,7 @@ Player.prototype.moveRIGHT = function() {
 
 // Handles user input using the arrow keys UP, DOWN, LEFT, RIGHT
 Player.prototype.handleInput = function(allowedKeys) {
+    "use strict";
     switch (allowedKeys) {
         case 'up':
             this.moveUP();
@@ -97,31 +113,12 @@ Player.prototype.handleInput = function(allowedKeys) {
     }
 };
 
-Player.prototype.update = function(dt) {
-};
+Player.prototype.update = function(dt) {};
 
 // Draw Player on the screen
 Player.prototype.render = function() {
+    "use strict";
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-// If an Enemy comes into contact with the Player
-// Player returns back to initial starting position
-var detectCollision = function() {
-    var collision = false;
-    for (var i = 0; i < allEnemies.length; i++) {
-        if (allEnemies[i].x < player.x + player.width &&
-            allEnemies[i].x + allEnemies[i].width > player.x &&
-            allEnemies[i].y < player.y + player.height &&
-            allEnemies[i].height + allEnemies[i].y > player.y) {
-            collision = true;
-        }
-    }
-    if (collision === true) {
-        return true;
-    } else {
-        return false;
-    }
 };
 
 // Instantiate objects
@@ -131,7 +128,6 @@ var allEnemies = [new Enemy(0, 5), new Enemy(1, 3), new Enemy(2, 1),
 ];
 // A player object in a variable called player
 var player = new Player();
-detectCollision();
 
 // Listens for key presses and sends the keys to your
 // Player.handleInput() method.
