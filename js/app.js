@@ -20,12 +20,9 @@ Enemy.prototype.update = function(dt) {
     // all computers.
 
     this.x += this.speed * dt;
-    console.log(this.speed);
 
-    // Sends the Enemy object off canvas left out of view to
-    // start left to right movement again
-
-    // comment this!!!!
+    // Once the x position of an Enemy object has exceeded the canvas width
+    // Enemy object moves back to initial starting position
     if (this.x > 500) {
         this.x = this.x - 671;
     }
@@ -45,6 +42,7 @@ Enemy.prototype.render = function() {
 var Player = function() {
     this.x = 200;
     this.y = 400;
+    this.speed = 50;
     this.sprite = 'images/char-boy.png';
     this.height = 76;
     this.width = 67;
@@ -80,7 +78,7 @@ Player.prototype.moveRIGHT = function() {
     }
 };
 
-// This function handles user input using the arrow keys UP, DOWN, LEFT, RIGHT
+// Handles user input using the arrow keys UP, DOWN, LEFT, RIGHT
 Player.prototype.handleInput = function(allowedKeys) {
     switch (allowedKeys) {
         case 'up':
@@ -96,16 +94,19 @@ Player.prototype.handleInput = function(allowedKeys) {
             this.moveRIGHT();
             break;
         default:
-            console.log('not an allowed key');
     }
 };
 
-Player.prototype.update = function(dt) {};
+Player.prototype.update = function(dt) {
+};
 
+// Draw Player on the screen
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+// If an Enemy comes into contact with the Player
+// Player returns back to initial starting position
 var detectCollision = function() {
     var collision = false;
     for (var i = 0; i < allEnemies.length; i++) {
